@@ -1,0 +1,1317 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://equity.desk/schemas/phase8.v2.json",
+  "title": "Phase-8 Coverage Export (#01 - Dive)",
+  "description": "Single card-ready object per ticker. Validates the paste before Firestore write. No-silent-omission: required keys must be present (value, null, '—', or 'No data found'). | v1.1: string maxLength + no-angle-bracket pattern added as defense-in-depth (AUDIT-02); the SITE must still HTML-escape/sanitize on render and before write. | v2: additive & NON-BREAKING (new fields are OPTIONAL — not added to any 'required' array — so v1-format pastes still validate; they validate the moment the §20 generator starts emitting them). Added: detail.smartMoney (13D activists / 13F notable holders / short-seller theses), detail.valuationMultiples (trailing & forward P/E, PEG, earnings yield, peer-median P/E), and 52-week range (high/low/midpoint/pricePctOfRange) in detail.sentiment. No v1 field removed, changed, or newly-required. Generator should emit schemaVersion 'phase8.v2' once it populates these.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "ticker",
+    "name",
+    "exchange",
+    "sector",
+    "tags",
+    "analysisDate",
+    "dataQuality",
+    "verdict",
+    "score",
+    "speculative",
+    "external",
+    "analystConsensus",
+    "headline",
+    "metrics",
+    "grades",
+    "flags",
+    "catalysts",
+    "watch",
+    "report",
+    "detail",
+    "meta"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "phase8.v2"
+    },
+    "ticker": {
+      "type": "string",
+      "pattern": "^[A-Z.\\-]{1,8}$",
+      "maxLength": 600
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "exchange": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "sector": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    },
+    "analysisDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "maxLength": 600
+    },
+    "dataQuality": {
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    "verdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pill",
+        "detailed",
+        "confidence",
+        "oneLiner"
+      ],
+      "properties": {
+        "pill": {
+          "enum": [
+            "BULL",
+            "NEUTRAL",
+            "BEAR"
+          ]
+        },
+        "detailed": {
+          "enum": [
+            "BUY-CANDIDATE",
+            "WATCH",
+            "PASS",
+            "AVOID"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "High",
+            "Moderate",
+            "Low"
+          ]
+        },
+        "oneLiner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "pattern": "^[^<>]*$"
+        }
+      }
+    },
+    "headline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "price",
+        "currency",
+        "entryPrice",
+        "entryPremiumPct",
+        "bullFV",
+        "bullUpsidePct"
+      ],
+      "properties": {
+        "price": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "entryPrice": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "entryPremiumPct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "bullFV": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "bullUpsidePct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revenue",
+        "avgDailyVol",
+        "shortInterest"
+      ],
+      "properties": {
+        "revenue": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "avgDailyVol": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "shortInterest": {
+          "type": "string",
+          "maxLength": 600
+        }
+      }
+    },
+    "grades": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mgmt",
+        "aiStress",
+        "cashStatus",
+        "survival"
+      ],
+      "properties": {
+        "mgmt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "grade",
+            "note"
+          ],
+          "properties": {
+            "grade": {
+              "type": "string",
+              "pattern": "^([A-F][+\\-]?|—)$",
+              "maxLength": 600
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 400,
+              "pattern": "^[^<>]*$"
+            }
+          }
+        },
+        "aiStress": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "result",
+            "note"
+          ],
+          "properties": {
+            "result": {
+              "enum": [
+                "PASS",
+                "FAIL"
+              ]
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 400,
+              "pattern": "^[^<>]*$"
+            }
+          }
+        },
+        "cashStatus": {
+          "enum": [
+            "FCF+",
+            "SELF-FUNDING",
+            "CASH-BURN",
+            "PRE-REV"
+          ]
+        },
+        "survival": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "score",
+            "label",
+            "risk"
+          ],
+          "properties": {
+            "score": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 100
+            },
+            "label": {
+              "type": "string",
+              "maxLength": 400,
+              "pattern": "^[^<>]*$"
+            },
+            "risk": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "board",
+        "up",
+        "down"
+      ],
+      "properties": {
+        "board": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "grade",
+              "color"
+            ],
+            "properties": {
+              "key": {
+                "enum": [
+                  "MGMT",
+                  "CASH",
+                  "VALUE",
+                  "AI",
+                  "UPSIDE"
+                ]
+              },
+              "grade": {
+                "type": "string",
+                "pattern": "^([A-F][+\\-]?|—)$",
+                "maxLength": 600
+              },
+              "color": {
+                "enum": [
+                  "green",
+                  "amber",
+                  "red"
+                ]
+              }
+            }
+          }
+        },
+        "up": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "down": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    },
+    "catalysts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "label"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 400,
+            "pattern": "^[^<>]*$"
+          }
+        }
+      }
+    },
+    "watch": {
+      "type": "string",
+      "maxLength": 400,
+      "pattern": "^[^<>]*$"
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "filename",
+        "format"
+      ],
+      "properties": {
+        "filename": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "format": {
+          "enum": [
+            "md",
+            "pdf"
+          ]
+        }
+      }
+    },
+    "detail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valuation",
+        "distribution",
+        "sizing",
+        "screens",
+        "management",
+        "corporateActions",
+        "earningsQualityFlags",
+        "sentiment",
+        "ai",
+        "evidence",
+        "keyQuestions",
+        "assumptions",
+        "politicalTies",
+        "trumpFamilyMentions",
+        "regulatoryExposure",
+        "notBacktested"
+      ],
+      "properties": {
+        "valuation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bear",
+            "base",
+            "bull",
+            "probWeighted",
+            "spread",
+            "dcfBites",
+            "gateImpliedGrowthPct",
+            "deliveredGrowthPct",
+            "marginOfSafetyPct",
+            "frame"
+          ],
+          "properties": {
+            "bear": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "base": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "bull": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "probWeighted": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "spread": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "dcfBites": {
+              "type": "boolean"
+            },
+            "gateImpliedGrowthPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "deliveredGrowthPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "marginOfSafetyPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "frame": {
+              "enum": [
+                "DCF",
+                "NAV/EBITDA",
+                "story-to-numbers"
+              ]
+            }
+          }
+        },
+        "distribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "p10",
+            "p25",
+            "p50",
+            "p75",
+            "p90",
+            "pValueGtPrice"
+          ],
+          "properties": {
+            "p10": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "p25": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "p50": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "p75": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "p90": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "pValueGtPrice": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "sizing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kellySizePct",
+            "track",
+            "note"
+          ],
+          "properties": {
+            "kellySizePct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "track": {
+              "enum": [
+                "core",
+                "optionality"
+              ]
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 400,
+              "pattern": "^[^<>]*$"
+            }
+          }
+        },
+        "screens": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "moat",
+            "roicVsWacc",
+            "altmanZ",
+            "grossMarginPct",
+            "fcfMarginPct",
+            "ruleOf40",
+            "revenueGrowthPct",
+            "netDebt"
+          ],
+          "properties": {
+            "moat": {
+              "type": "string",
+              "maxLength": 80,
+              "pattern": "^[^<>]*$"
+            },
+            "roicVsWacc": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "altmanZ": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "grossMarginPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "fcfMarginPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "ruleOf40": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "revenueGrowthPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "netDebt": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "management": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "grade",
+            "promote",
+            "demote",
+            "insider"
+          ],
+          "properties": {
+            "grade": {
+              "type": "string",
+              "pattern": "^([A-F][+\\-]?|—)$",
+              "maxLength": 600
+            },
+            "promote": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 600,
+                "pattern": "^[^<>]*$"
+              }
+            },
+            "demote": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 600,
+                "pattern": "^[^<>]*$"
+              }
+            },
+            "insider": {
+              "type": "string",
+              "maxLength": 600
+            }
+          }
+        },
+        "corporateActions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "earningsQualityFlags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "sentiment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "deRating",
+            "priceVs52wHighPct",
+            "analystAvgTarget",
+            "analystVsPrice"
+          ],
+          "properties": {
+            "deRating": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "priceVs52wHighPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "analystAvgTarget": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "analystVsPrice": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "high": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "low": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "midpoint": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "pricePctOfRange": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "ai": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dependency",
+            "floor"
+          ],
+          "properties": {
+            "dependency": {
+              "enum": [
+                "Immune",
+                "Tangential",
+                "Moderate",
+                "High",
+                "Existential"
+              ]
+            },
+            "floor": {
+              "type": "string",
+              "maxLength": 600
+            }
+          }
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bull",
+            "bear"
+          ],
+          "properties": {
+            "bull": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 600,
+                "pattern": "^[^<>]*$"
+              }
+            },
+            "bear": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 600,
+                "pattern": "^[^<>]*$"
+              }
+            }
+          }
+        },
+        "keyQuestions": {
+          "type": "string",
+          "maxLength": 400,
+          "pattern": "^[^<>]*$"
+        },
+        "assumptions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "growth",
+            "termFcfMargin",
+            "wacc",
+            "weights",
+            "authorStress"
+          ],
+          "properties": {
+            "growth": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "termFcfMargin": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "wacc": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "weights": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "authorStress": {
+              "type": "string",
+              "maxLength": 600
+            }
+          }
+        },
+        "politicalTies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "trumpFamilyMentions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "regulatoryExposure": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "notBacktested": {
+          "type": "boolean"
+        },
+        "smartMoney": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "activists",
+            "notableHolders",
+            "shortTheses"
+          ],
+          "properties": {
+            "activists": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 600,
+                "pattern": "^[^<>]*$"
+              }
+            },
+            "notableHolders": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 600,
+                "pattern": "^[^<>]*$"
+              }
+            },
+            "shortTheses": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 600,
+                "pattern": "^[^<>]*$"
+              }
+            }
+          }
+        },
+        "valuationMultiples": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "peTtm",
+            "peForward",
+            "peg",
+            "earningsYield",
+            "peerMedianPe"
+          ],
+          "properties": {
+            "peTtm": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "peForward": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "peg": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "earningsYield": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "peerMedianPe": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatedBy",
+        "engineVersion",
+        "estimatedFields"
+      ],
+      "properties": {
+        "generatedBy": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "engineVersion": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "estimatedFields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        }
+      }
+    },
+    "score": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "diveScore",
+        "letter",
+        "quality",
+        "value",
+        "components",
+        "notes"
+      ],
+      "properties": {
+        "diveScore": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "letter": {
+          "type": "string",
+          "pattern": "^([A-F]|SPEC)$",
+          "maxLength": 600
+        },
+        "quality": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "value": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "components": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "moat",
+            "returns",
+            "solvency",
+            "mgmt",
+            "ai"
+          ],
+          "properties": {
+            "moat": {
+              "type": "number"
+            },
+            "returns": {
+              "type": "number"
+            },
+            "solvency": {
+              "type": "number"
+            },
+            "mgmt": {
+              "type": "number"
+            },
+            "ai": {
+              "type": "number"
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "mode": {
+          "enum": [
+            "value",
+            "speculative"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "external": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "morningstar",
+        "esgRisk",
+        "asOf"
+      ],
+      "properties": {
+        "morningstar": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "star",
+            "moat",
+            "fairValue"
+          ],
+          "properties": {
+            "star": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1,
+              "maximum": 5
+            },
+            "moat": {
+              "enum": [
+                "None",
+                "Narrow",
+                "Wide",
+                "No data found"
+              ]
+            },
+            "fairValue": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "esgRisk": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rating",
+            "score"
+          ],
+          "properties": {
+            "rating": {
+              "enum": [
+                "Negligible",
+                "Low",
+                "Medium",
+                "High",
+                "Severe",
+                "No data found"
+              ]
+            },
+            "score": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "asOf": {
+          "type": "string",
+          "maxLength": 400,
+          "pattern": "^[^<>]*$"
+        }
+      }
+    },
+    "analystConsensus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "consensus",
+        "avgTarget",
+        "targetUpsidePct",
+        "high",
+        "low",
+        "analystCount",
+        "asOf",
+        "ratings",
+        "ratingsNote"
+      ],
+      "properties": {
+        "consensus": {
+          "enum": [
+            "Strong Buy",
+            "Buy",
+            "Hold",
+            "Sell",
+            "Strong Sell",
+            "No data found"
+          ]
+        },
+        "avgTarget": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "targetUpsidePct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "high": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "low": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "analystCount": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "asOf": {
+          "type": "string",
+          "maxLength": 400,
+          "pattern": "^[^<>]*$"
+        },
+        "ratings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "firm",
+              "rating",
+              "target",
+              "date"
+            ],
+            "properties": {
+              "firm": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[^<>]*$"
+              },
+              "rating": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[^<>]*$"
+              },
+              "target": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "date": {
+                "type": "string",
+                "maxLength": 600
+              }
+            }
+          }
+        },
+        "ratingsNote": {
+          "type": "string",
+          "maxLength": 400,
+          "pattern": "^[^<>]*$"
+        }
+      }
+    },
+    "speculative": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "payoffTree",
+        "ev",
+        "evVsPricePct",
+        "marketImpliedTopProb",
+        "yourTopProb",
+        "qualitative",
+        "read"
+      ],
+      "properties": {
+        "payoffTree": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "value",
+              "prob"
+            ],
+            "properties": {
+              "label": {
+                "type": "string",
+                "maxLength": 400,
+                "pattern": "^[^<>]*$"
+              },
+              "value": {
+                "type": "number"
+              },
+              "prob": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "ev": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "evVsPricePct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "marketImpliedTopProb": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "yourTopProb": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "qualitative": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "founder",
+            "tam",
+            "moatFormation",
+            "missionCriticality",
+            "downsideSurvivable"
+          ],
+          "properties": {
+            "founder": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "tam": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "moatFormation": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "missionCriticality": {
+              "type": "string",
+              "maxLength": 600
+            },
+            "downsideSurvivable": {
+              "type": "string",
+              "maxLength": 600
+            }
+          }
+        },
+        "read": {
+          "type": "string",
+          "maxLength": 400,
+          "pattern": "^[^<>]*$"
+        }
+      }
+    }
+  }
+}
