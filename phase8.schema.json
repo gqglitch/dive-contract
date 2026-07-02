@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://equity.desk/schemas/phase8.v2.json",
   "title": "Phase-8 Coverage Export (#01 - Dive)",
-  "description": "Single card-ready object per ticker. Validates the paste before Firestore write. No-silent-omission: required keys must be present (value, null, '—', or 'No data found'). | v1.1: string maxLength + no-angle-bracket pattern added as defense-in-depth (AUDIT-02); the SITE must still HTML-escape/sanitize on render and before write. | v2: additive & NON-BREAKING (new fields are OPTIONAL — not added to any 'required' array — so v1-format pastes still validate; they validate the moment the §20 generator starts emitting them). Added: detail.smartMoney (13D activists / 13F notable holders / short-seller theses), detail.valuationMultiples (trailing & forward P/E, PEG, earnings yield, peer-median P/E), and 52-week range (high/low/midpoint/pricePctOfRange) in detail.sentiment. No v1 field removed, changed, or newly-required. Generator should emit schemaVersion 'phase8.v2' once it populates these.",
+  "description": "Single card-ready object per ticker. Validates the paste before Firestore write. No-silent-omission: required keys must be present (value, null, '\u2014', or 'No data found'). | v1.1: string maxLength + no-angle-bracket pattern added as defense-in-depth (AUDIT-02); the SITE must still HTML-escape/sanitize on render and before write. | v2: additive & NON-BREAKING (new fields are OPTIONAL \u2014 not added to any 'required' array \u2014 so v1-format pastes still validate; they validate the moment the \u00a720 generator starts emitting them). Added: detail.smartMoney (13D activists / 13F notable holders / short-seller theses), detail.valuationMultiples (trailing & forward P/E, PEG, earnings yield, peer-median P/E), and 52-week range (high/low/midpoint/pricePctOfRange) in detail.sentiment. No v1 field removed, changed, or newly-required. Generator should emit schemaVersion 'phase8.v2' once it populates these.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -35,7 +35,7 @@
     },
     "ticker": {
       "type": "string",
-      "pattern": "^[A-Z.\\-]{1,8}$",
+      "pattern": "^[A-Z0-9.\\-]{1,10}$",
       "maxLength": 600
     },
     "name": {
@@ -95,7 +95,8 @@
             "BUY-CANDIDATE",
             "WATCH",
             "PASS",
-            "AVOID"
+            "AVOID",
+            "NOT-ANALYZABLE"
           ]
         },
         "confidence": {
@@ -155,6 +156,12 @@
             "number",
             "null"
           ]
+        },
+        "fxToUsd": {
+          "type": [
+            "number",
+            "null"
+          ]
         }
       }
     },
@@ -201,7 +208,7 @@
           "properties": {
             "grade": {
               "type": "string",
-              "pattern": "^([A-F][+\\-]?|—)$",
+              "pattern": "^([A-F][+\\-]?|\u2014)$",
               "maxLength": 600
             },
             "note": {
@@ -222,7 +229,8 @@
             "result": {
               "enum": [
                 "PASS",
-                "FAIL"
+                "FAIL",
+                "N/A"
               ]
             },
             "note": {
@@ -302,14 +310,15 @@
               },
               "grade": {
                 "type": "string",
-                "pattern": "^([A-F][+\\-]?|—)$",
+                "pattern": "^([A-F][+\\-]?|\u2014)$",
                 "maxLength": 600
               },
               "color": {
                 "enum": [
                   "green",
                   "amber",
-                  "red"
+                  "red",
+                  "grey"
                 ]
               }
             }
@@ -467,7 +476,8 @@
               "enum": [
                 "DCF",
                 "NAV/EBITDA",
-                "story-to-numbers"
+                "story-to-numbers",
+                "not-analyzable"
               ]
             }
           }
@@ -624,7 +634,7 @@
           "properties": {
             "grade": {
               "type": "string",
-              "pattern": "^([A-F][+\\-]?|—)$",
+              "pattern": "^([A-F][+\\-]?|\u2014)$",
               "maxLength": 600
             },
             "promote": {
@@ -735,7 +745,8 @@
                 "Tangential",
                 "Moderate",
                 "High",
-                "Existential"
+                "Existential",
+                "Unassessed"
               ]
             },
             "floor": {
@@ -912,6 +923,109 @@
               ]
             }
           }
+        },
+        "sectorKPIs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "null"
+            ],
+            "maxLength": 600
+          }
+        },
+        "trapType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 120,
+          "pattern": "^[^<>]*$"
+        },
+        "entryPlan": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "anchor",
+            "premiumPct",
+            "tranches",
+            "reentryLevel",
+            "deepLevel",
+            "note"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "buy-zone",
+                "staged",
+                "watch",
+                "no-entry"
+              ]
+            },
+            "anchor": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "premiumPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "tranches": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "level",
+                  "weightPct",
+                  "trigger"
+                ],
+                "properties": {
+                  "level": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "weightPct": {
+                    "type": "number"
+                  },
+                  "trigger": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^[^<>]*$"
+                  }
+                }
+              }
+            },
+            "reentryLevel": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "deepLevel": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 400,
+              "pattern": "^[^<>]*$"
+            }
+          }
         }
       }
     },
@@ -965,11 +1079,14 @@
         },
         "letter": {
           "type": "string",
-          "pattern": "^([A-F]|SPEC)$",
+          "pattern": "^([A-F]|SPEC|NA)$",
           "maxLength": 600
         },
         "quality": {
-          "type": "integer",
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 0,
           "maximum": 100
         },
@@ -993,19 +1110,34 @@
           ],
           "properties": {
             "moat": {
-              "type": "number"
+              "type": [
+                "number",
+                "null"
+              ]
             },
             "returns": {
-              "type": "number"
+              "type": [
+                "number",
+                "null"
+              ]
             },
             "solvency": {
-              "type": "number"
+              "type": [
+                "number",
+                "null"
+              ]
             },
             "mgmt": {
-              "type": "number"
+              "type": [
+                "number",
+                "null"
+              ]
             },
             "ai": {
-              "type": "number"
+              "type": [
+                "number",
+                "null"
+              ]
             }
           }
         },
@@ -1070,6 +1202,22 @@
                 "number",
                 "null"
               ]
+            },
+            "uncertainty": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 80,
+              "pattern": "^[^<>]*$"
+            },
+            "fairValueNote": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 200,
+              "pattern": "^[^<>]*$"
             }
           }
         },
@@ -1313,5 +1461,6 @@
         }
       }
     }
-  }
+  },
+  "$comment": "contract rev v2.1 (additive over phase8.v2): digit tickers, grey flag color, NOT-ANALYZABLE, morningstar.uncertainty/fairValueNote, headline.fxToUsd, detail.sectorKPIs/trapType/entryPlan, nullable score internals for stubs. 2026-07-01 remediation."
 }

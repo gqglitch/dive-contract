@@ -1,0 +1,683 @@
+{
+  "$comment": "phase1.v1 fact-sheet contract (2026-07-01 remediation, finding M5). Additive-friendly; importer parses the DIVE-IMPORT:PHASE1 sentinel.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "phase1.v1"
+    },
+    "ticker": {
+      "type": "string",
+      "pattern": "^[A-Z0-9.\\-]{1,10}$",
+      "maxLength": 10
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 600,
+      "pattern": "^[^<>]*$",
+      "minLength": 1
+    },
+    "exchange": {
+      "type": "string",
+      "maxLength": 600,
+      "pattern": "^[^<>]*$",
+      "minLength": 1
+    },
+    "analysisDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "maxLength": 10
+    },
+    "priceCurrency": {
+      "type": "string",
+      "maxLength": 10,
+      "pattern": "^[^<>]*$",
+      "minLength": 1
+    },
+    "fxToUsd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "priceAtAnalysis": {
+      "type": "number"
+    },
+    "sharesOutstandingDiluted": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "stage": {
+      "enum": [
+        "Pre-revenue",
+        "Growth",
+        "Mature",
+        "Turnaround"
+      ]
+    },
+    "sector": {
+      "type": "string",
+      "maxLength": 120,
+      "pattern": "^[^<>]*$",
+      "minLength": 1
+    },
+    "moat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sources",
+        "durability",
+        "basis"
+      ],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "durability": {
+          "enum": [
+            "Wide",
+            "Narrow",
+            "None"
+          ]
+        },
+        "basis": {
+          "type": "string",
+          "maxLength": 400,
+          "pattern": "^[^<>]*$"
+        }
+      }
+    },
+    "revenue": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "revenuePriorYear": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "grossMargin": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "netIncome": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "ebit": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "ebitda": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "freeCashFlow": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "netDebt": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "sbcPctRevenue": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "roic": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "wacc": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "economicProfit": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "piotroskiF": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 9
+    },
+    "beneishM": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "altmanZ": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "distressZone": {
+      "enum": [
+        "Safe",
+        "Grey",
+        "Distress",
+        null
+      ]
+    },
+    "netDebtToEbitda": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cashOnHand": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "quarterlyBurn": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "runwayQuarters": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cashStatus": {
+      "enum": [
+        "Profitable",
+        "Self-funding",
+        "Burning"
+      ]
+    },
+    "sectorKPIs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "null"
+        ],
+        "maxLength": 600
+      }
+    },
+    "range52w": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "high",
+        "low",
+        "midpoint",
+        "pricePctOfRange"
+      ],
+      "properties": {
+        "high": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "low": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "midpoint": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "pricePctOfRange": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "shortInterestPct": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "prevShortInterestPct": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "insiderNet6mUsd": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "insiderActivity": {
+      "type": "string",
+      "maxLength": 600,
+      "pattern": "^[^<>]*$",
+      "minLength": 1
+    },
+    "avgDailyVolumeUsd": {
+      "type": [
+        "integer",
+        "number",
+        "null"
+      ]
+    },
+    "priceVs52wHighPct": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "priceChangeVsEpsChange": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 400,
+      "pattern": "^[^<>]*$"
+    },
+    "currentMultipleVsHistory": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 400,
+      "pattern": "^[^<>]*$"
+    },
+    "valuationMultiples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "peTtm",
+        "peForward",
+        "peg",
+        "earningsYield",
+        "peerMedianPe"
+      ],
+      "properties": {
+        "peTtm": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "peForward": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "peg": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "earningsYield": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "peerMedianPe": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "analystSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "buy",
+        "hold",
+        "sell",
+        "medianTarget",
+        "targetDispersion",
+        "recentChanges"
+      ],
+      "properties": {
+        "buy": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hold": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "sell": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "medianTarget": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "targetDispersion": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200,
+          "pattern": "^[^<>]*$"
+        },
+        "recentChanges": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        }
+      }
+    },
+    "corporateActions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    },
+    "reverseSplitRisk": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "mgmtTriggers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "promote",
+        "demote"
+      ],
+      "properties": {
+        "promote": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "demote": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        }
+      }
+    },
+    "aiDependency": {
+      "enum": [
+        "Immune",
+        "Tangential",
+        "Moderate",
+        "High",
+        "Existential"
+      ]
+    },
+    "pctRevenueNonAI": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "rateSensitivity": {
+      "enum": [
+        "High",
+        "Moderate",
+        "Low",
+        "Inverse"
+      ]
+    },
+    "govRevenuePct": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "politicalTies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    },
+    "trumpFamilyMentions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    },
+    "regulatoryExposure": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    },
+    "smartMoney": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activists",
+        "notableHolders",
+        "shortTheses"
+      ],
+      "properties": {
+        "activists": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "notableHolders": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        },
+        "shortTheses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 600,
+            "pattern": "^[^<>]*$"
+          }
+        }
+      }
+    },
+    "catalysts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "label"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "maxLength": 60,
+            "pattern": "^[^<>]*$"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 400,
+            "pattern": "^[^<>]*$"
+          }
+        }
+      }
+    },
+    "bullEvidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    },
+    "bearEvidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    },
+    "dataQuality": {
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    "estimatedFields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 600,
+        "pattern": "^[^<>]*$"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "ticker",
+    "name",
+    "exchange",
+    "analysisDate",
+    "priceCurrency",
+    "fxToUsd",
+    "priceAtAnalysis",
+    "sharesOutstandingDiluted",
+    "stage",
+    "sector",
+    "moat",
+    "revenue",
+    "revenuePriorYear",
+    "grossMargin",
+    "netIncome",
+    "ebit",
+    "ebitda",
+    "freeCashFlow",
+    "netDebt",
+    "sbcPctRevenue",
+    "roic",
+    "wacc",
+    "economicProfit",
+    "piotroskiF",
+    "beneishM",
+    "altmanZ",
+    "distressZone",
+    "netDebtToEbitda",
+    "cashOnHand",
+    "quarterlyBurn",
+    "runwayQuarters",
+    "cashStatus",
+    "sectorKPIs",
+    "range52w",
+    "shortInterestPct",
+    "prevShortInterestPct",
+    "insiderNet6mUsd",
+    "insiderActivity",
+    "avgDailyVolumeUsd",
+    "priceVs52wHighPct",
+    "priceChangeVsEpsChange",
+    "currentMultipleVsHistory",
+    "valuationMultiples",
+    "analystSnapshot",
+    "corporateActions",
+    "reverseSplitRisk",
+    "mgmtTriggers",
+    "aiDependency",
+    "pctRevenueNonAI",
+    "rateSensitivity",
+    "govRevenuePct",
+    "politicalTies",
+    "trumpFamilyMentions",
+    "regulatoryExposure",
+    "smartMoney",
+    "catalysts",
+    "bullEvidence",
+    "bearEvidence",
+    "dataQuality",
+    "estimatedFields"
+  ]
+}
