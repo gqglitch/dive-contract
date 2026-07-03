@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://equity.desk/schemas/phase8.v2.json",
   "title": "Phase-8 Coverage Export (#01 - Dive)",
-  "description": "Single card-ready object per ticker. Validates the paste before Firestore write. No-silent-omission: required keys must be present (value, null, '\u2014', or 'No data found'). | v1.1: string maxLength + no-angle-bracket pattern added as defense-in-depth (AUDIT-02); the SITE must still HTML-escape/sanitize on render and before write. | v2: additive & NON-BREAKING (new fields are OPTIONAL \u2014 not added to any 'required' array \u2014 so v1-format pastes still validate; they validate the moment the \u00a720 generator starts emitting them). Added: detail.smartMoney (13D activists / 13F notable holders / short-seller theses), detail.valuationMultiples (trailing & forward P/E, PEG, earnings yield, peer-median P/E), and 52-week range (high/low/midpoint/pricePctOfRange) in detail.sentiment. No v1 field removed, changed, or newly-required. Generator should emit schemaVersion 'phase8.v2' once it populates these.",
+  "description": "Single card-ready object per ticker. Validates the paste before Firestore write. No-silent-omission: required keys must be present (value, null, '—', or 'No data found'). | v1.1: string maxLength + no-angle-bracket pattern added as defense-in-depth (AUDIT-02); the SITE must still HTML-escape/sanitize on render and before write. | v2: additive & NON-BREAKING (new fields are OPTIONAL — not added to any 'required' array — so v1-format pastes still validate; they validate the moment the §20 generator starts emitting them). Added: detail.smartMoney (13D activists / 13F notable holders / short-seller theses), detail.valuationMultiples (trailing & forward P/E, PEG, earnings yield, peer-median P/E), and 52-week range (high/low/midpoint/pricePctOfRange) in detail.sentiment. No v1 field removed, changed, or newly-required. Generator should emit schemaVersion 'phase8.v2' once it populates these.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -208,7 +208,7 @@
           "properties": {
             "grade": {
               "type": "string",
-              "pattern": "^([A-F][+\\-]?|\u2014)$",
+              "pattern": "^([A-F][+\\-]?|—)$",
               "maxLength": 600
             },
             "note": {
@@ -310,7 +310,7 @@
               },
               "grade": {
                 "type": "string",
-                "pattern": "^([A-F][+\\-]?|\u2014)$",
+                "pattern": "^([A-F][+\\-]?|—)$",
                 "maxLength": 600
               },
               "color": {
@@ -634,7 +634,7 @@
           "properties": {
             "grade": {
               "type": "string",
-              "pattern": "^([A-F][+\\-]?|\u2014)$",
+              "pattern": "^([A-F][+\\-]?|—)$",
               "maxLength": 600
             },
             "promote": {
@@ -964,7 +964,8 @@
                 "buy-zone",
                 "staged",
                 "watch",
-                "no-entry"
+                "no-entry",
+                "speculative"
               ]
             },
             "anchor": {
@@ -1024,6 +1025,87 @@
               "type": "string",
               "maxLength": 400,
               "pattern": "^[^<>]*$"
+            },
+            "trendTrack": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "eligible": {
+                  "type": "boolean"
+                },
+                "status": {
+                  "enum": [
+                    "IN-TREND",
+                    "NOT-ELIGIBLE",
+                    "NO-DATA"
+                  ]
+                },
+                "entryMarket": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 20,
+                  "pattern": "^[^<>]*$"
+                },
+                "entry": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 20,
+                  "pattern": "^[^<>]*$"
+                },
+                "entryPullback": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "sizeCapPct": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "exitRule": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 200,
+                  "pattern": "^[^<>]*$"
+                },
+                "ma50": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "ma200": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "priceVsMa200Pct": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 400,
+                  "pattern": "^[^<>]*$"
+                }
+              }
             }
           }
         }
@@ -1462,5 +1544,5 @@
       }
     }
   },
-  "$comment": "contract rev v2.1 (additive over phase8.v2): digit tickers, grey flag color, NOT-ANALYZABLE, morningstar.uncertainty/fairValueNote, headline.fxToUsd, detail.sectorKPIs/trapType/entryPlan, nullable score internals for stubs. 2026-07-01 remediation."
+  "$comment": "contract rev v2.3 (additive over phase8.v2, schemaVersion const unchanged): entryPlan.mode += 'speculative' (v2.2 — new runs retire bare 'no-entry'); entryPlan.trendTrack optional object (v2.3 — section-26 trend-participation line). Builds on v2.1 (grey/NOT-ANALYZABLE/entryPlan/etc). 2026-07-03."
 }
