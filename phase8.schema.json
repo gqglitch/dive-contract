@@ -1106,6 +1106,32 @@
                   "pattern": "^[^<>]*$"
                 }
               }
+            },
+            "fwdIrrPct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "hurdlePct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "deepValueP25": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "anchorBasis": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 120,
+              "pattern": "^[^<>]*$"
             }
           }
         }
@@ -1544,5 +1570,5 @@
       }
     }
   },
-  "$comment": "contract rev v2.3 (additive over phase8.v2, schemaVersion const unchanged): entryPlan.mode += 'speculative' (v2.2 — new runs retire bare 'no-entry'); entryPlan.trendTrack optional object (v2.3 — section-26 trend-participation line). Builds on v2.1 (grey/NOT-ANALYZABLE/entryPlan/etc). 2026-07-03."
+  "$comment": "contract rev v2.2 CONSOLIDATED (additive over phase8.v2, schemaVersion const unchanged): entryPlan.mode += 'speculative' (retires bare no-entry, DEC-15); entryPlan.trendTrack (section-26 trend line, DEC-19); entryPlan hurdle-entry fields fwdIrrPct/hurdlePct/deepValueP25/anchorBasis (headline.entryPrice is now the hurdle entry, DEC-23). Builds on v2.1. 2026-07-04."
 }
