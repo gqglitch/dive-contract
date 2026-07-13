@@ -1,0 +1,20 @@
+# Drift gate for gqglitch/dive-contract (FABLE-AUDIT 2026-07-12). This file is
+# the SOURCE; the 03-dashboard deploy mirrors it to .github/workflows/ci.yml in
+# the contract repo — never hand-edit it there. It runs ci_check.py on every
+# schema/validator push: structural invariants of HEAD, validator-embed vs HEAD
+# symmetric diff, and known-good fixtures through the validator's LIVE code path.
+# Exit 0 = mergeable; exit 1 = the push would drift the truth — do not merge.
+name: contract-drift-gate
+on:
+  push:
+    paths: ["*.schema.json", "validate_dashboard.py", "ci_check.py"]
+  pull_request:
+    paths: ["*.schema.json", "validate_dashboard.py", "ci_check.py"]
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python ci_check.py
