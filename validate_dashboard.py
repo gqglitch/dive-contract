@@ -1,6 +1,6 @@
 r"""
 validate_dashboard.py -- deterministic pre-flight gate for BOTH dive JSONs.
-VERSION: v2.0 (2026-07-01 remediation)   [pinned in MANIFEST.md]
+VERSION: v2.0 (2026-07-01 remediation)   [pinned in 01_Dive_Manifest.md]
 
 WHAT IT GATES
   finalize_dashboard(obj) -> the Phase-8 dashboard JSON (contract: phase8.v2, rev v2.1)
